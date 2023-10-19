@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {background-color: pink;}
+   .container {
+      display: flex;
+      justify-content: center; 
+    }
+    #pixelCanvas {
+      border: 2px solid #000;
+      background-color: white;
+      margin-right: 30px;
+    }
+    .example-images {
+      display: flex;
+      flex-direction: column;
+      width: 400px;
+      height: auto;
+      margin-top: 10px;
+    }
+    h1 {
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn{display: flex;
+      justify-content: center; margin-top: 10px; margin-left: -170px;}
+
+  </style>
+</head>
+<body>
+  <h1 class="title">나만의 픽셀아트 만들기~!</h1>
+  <div class="container">
+    <canvas id="pixelCanvas" width="405" height="405"></canvas>
+    <div class="example-images">
+      <img src="curby.jpeg" alt="예시 이미지 1" style="display: none;">
+      <img src="ham.jpeg" alt="예시 이미지 2" style="display: none;">
+      <img src="panda.jpeg" alt="예시 이미지 3" style="display: none;">
+      <p>예시이미지</p>
+    </div>
+  </div>
+  <div class="btn">
+    <input type="color" id="colorPicker" value="#000000">
+    <button id="clearButton">지우기</button>
+    <button id="saveButton">저장</button>
+  </div>
+    
+  <script>
+    const pixelCanvas = document.getElementById('pixelCanvas');
+    const ctx = pixelCanvas.getContext('2d');
+    const clearButton = document.getElementById('clearButton');
+    const saveButton = document.getElementById('saveButton');
+    const colorPicker = document.getElementById('colorPicker');
+    const exampleImages = document.querySelectorAll('.example-images img');
+    
+    const pixelSize = 15; 
+    const canvasWidth = pixelCanvas.width;
+    const canvasHeight = pixelCanvas.height;
+
+    clearButton.addEventListener('click', clearCanvas);
+    saveButton.addEventListener('click', saveCanvas);
+
+    pixelCanvas.addEventListener('mousedown', drawPixel);
+
+    
+    function drawGrid() {
+      ctx.strokeStyle = '#999'; 
+      ctx.lineWidth = 0.5; 
+
+      for (let x = 0; x < canvasWidth; x += pixelSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasHeight);
+        ctx.stroke();
+      }
+
+      for (let y = 0; y < canvasHeight; y += pixelSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvasWidth, y);
+        ctx.stroke();
+      }
+    }
+
+    function drawPixel(event) {
+      const x = Math.floor(event.clientX - pixelCanvas.getBoundingClientRect().left);
+      const y = Math.floor(event.clientY - pixelCanvas.getBoundingClientRect().top);
+
+      ctx.fillStyle = colorPicker.value;
+      ctx.fillRect(Math.floor(x / pixelSize) * pixelSize, Math.floor(y / pixelSize) * pixelSize, pixelSize, pixelSize);
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      drawGrid(); 
+    }
+
+    function saveCanvas() {
+      const image = pixelCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = 'pixel_art.png';
+      link.click();
+    }
+
+    function getRandomImage() {
+
+      const randomIndex = Math.floor(Math.random() * exampleImages.length);
+      const selectedImage = exampleImages[randomIndex];
+      
+      exampleImages.forEach(image => {
+        image.style.display = 'none';
+      });
+
+      selectedImage.style.display = 'block';
+    }
+
+    getRandomImage();
+    drawGrid();
+  </script>
+</body>
+</html>
+
+
+
+
